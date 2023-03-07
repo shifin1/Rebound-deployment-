@@ -7,8 +7,7 @@ import connectDB from "./config/dbConn.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import morgan from "morgan";
 import userRoutes from "./routes/userRoutes.js";
-import playerRoutes from "./routes/playerRoutes.js";
-import newsRoutes from "./routes/newsRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
 
 const app = express();
 
@@ -21,9 +20,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const __dirname = path.resolve();
 
+app.use("/api/users", userRoutes);
+app.use("/api/teams", teamRoutes);
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/build")));
-  app.get("*", (req, res) => {
+  app.get("/*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });
 } else {
@@ -31,10 +33,6 @@ if (process.env.NODE_ENV === "production") {
     res.send("API is running.....");
   });
 }
-
-app.use("/api/users", userRoutes);
-app.use("/api/players", playerRoutes);
-app.use("/api/news", newsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
